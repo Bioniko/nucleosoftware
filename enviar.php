@@ -1,5 +1,17 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
+$host = 'smtp.secureserver.net';
+$port = 587;
+$timeout = 10;
+
+$connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
+
+if ($connection) {
+    echo "Conexión exitosa a $host en puerto $port";
+    fclose($connection);
+} else {
+    echo "No se pudo conectar a $host en puerto $port. Error $errno: $errstr";
+}
+/*use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/vendor/autoload.php';
