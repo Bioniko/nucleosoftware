@@ -1,35 +1,36 @@
 <?php
-// Mostrar errores
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-// Cargar la librería de SendGrid
 require __DIR__ . '/vendor/autoload.php';
-use SendGrid\Mail\Mail;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre  = $_POST['nombre'] ?? 'Invitado';
-    $email   = $_POST['correo'] ?? 'info@nucleosoftware.com';
-    $mensaje = $_POST['mensaje'] ?? 'Mensaje vacío';
+$mail = new PHPMailer(true);
 
-    $emailSend = new Mail();
-    $emailSend->setFrom("info@nucleosoftware.com", "Nucleo Software");
-    $emailSend->setSubject("Nuevo mensaje desde el formulario web");
-    $emailSend->addTo("info@nucleosoftware.com", "Nucleo Software");
-    $emailSend->setReplyTo($email, $nombre);
-    $emailSend->addContent(
-        "text/html",
-        "<strong>Nombre:</strong> $nombre<br><strong>Email:</strong> $email<br><strong>Mensaje:</strong><br>$mensaje"
-    );
+try {
+    // Configuración del servidor SMTP GoDaddy
+    $mail->isSMTP();
+    $mail->Host       = 'smtp.secureserver.net';  // SMTP de GoDaddy
+    $mail->SMTPAuth   = true;
+    $mail->Username   = 'info@nucleosoftware.com';  // Tu correo
+    $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';           // Tu contraseña
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // o PHPMailer::ENCRYPTION_SMTPS para SSL
+    $mail->Port       = 587;                        // Puerto SMTP
 
-    $sendgrid = new \SendGrid('SG.4xWjvXaNQm6vNFnzaqKLZQ.qQ0_OwqEXAMPLEVsgSVCZqTVmIkjMk');
+    // Remitente y destinatario
+    $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
+    $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software'); // Destino
 
-    try {
-        $response = $sendgrid->send($emailSend);
-        echo "Respuesta: " . $response->statusCode();
-    } catch (Exception $e) {
-        echo 'Error: ' . $e->getMessage();
-    }
+    // Contenido del mensaje
+    $mail->isHTML(true);
+    $mail->Subject = 'Nuevo mensaje desde el formulario web';
+    $mail->Body    = '
+        <strong>Nombre:</strong> ' . htmlspecialchars($_POST['nombre']) . '<br>
+        <strong>Email:</strong> ' . htmlspecialchars($_POST['correo']) . '<br>
+        <strong>Mensaje:</strong><br>' . nl2br(htmlspecialchars($_POST['mensaje'])) . '
+    ';
+
+    $mail->send();
+    echo 'Mensaje enviado correctamente';
+} catch (Exception $e) {
+    echo "Error al enviar: {$mail->ErrorInfo}";
 }
-
