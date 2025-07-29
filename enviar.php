@@ -1,48 +1,35 @@
 <?php
-
-require __DIR__ . '/vendor/autoload.php';
-
-use SendGrid\Mail\Mail;
-
+// Mostrar errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre  = htmlspecialchars($_POST['nombre'] ?? '');
-    $correo   = filter_var($_POST['correo'] ?? '', FILTER_SANITIZE_EMAIL);
-    $celular  = htmlspecialchars($_POST['celular'] ?? '');
-    $mensaje = htmlspecialchars($_POST['mensaje'] ?? '');
+// Cargar la librería de SendGrid
+require __DIR__ . '/vendor/autoload.php';
+use SendGrid\Mail\Mail;
 
-    if (empty($nombre) || !filter_var($correo, FILTER_VALIDATE_EMAIL) || empty($mensaje)) {
-        http_response_code(400);
-        echo "Formulario inválido.";
-        exit;
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre  = $_POST['nombre'] ?? 'Invitado';
+    $email   = $_POST['correo'] ?? 'info@nucleosoftware.com';
+    $mensaje = $_POST['mensaje'] ?? 'Mensaje vacío';
 
     $emailSend = new Mail();
     $emailSend->setFrom("info@nucleosoftware.com", "Nucleo Software");
-    $emailSend->setSubject("Nuevo mensaje desde la web");
-    $emailSend->addTo("info@nucleosoftware.com");
-    $emailSend->addReplyTo($correo, $nombre);
-    $emailSend->addContent("text/html", "
-        <strong>Nombre:</strong> {$nombre}<br>
-        <strong>Email:</strong> {$correo}<br>
-        <strong>Nombre:</strong> {$celular}<br>
-        <strong>Mensaje:</strong><br>" . nl2br($mensaje)
+    $emailSend->setSubject("Nuevo mensaje desde el formulario web");
+    $emailSend->addTo("info@nucleosoftware.com", "Nucleo Software");
+    $emailSend->addReplyTo($email, $nombre);
+    $emailSend->addContent(
+        "text/html",
+        "<strong>Nombre:</strong> $nombre<br><strong>Email:</strong> $email<br><strong>Mensaje:</strong><br>$mensaje"
     );
 
-    $sendgrid = new \SendGrid('4SRZWKNUN6R4DEX67QW3T2TR'); // <- pega aquí tu API key
+    $sendgrid = new \SendGrid('4SRZWKNUN6R4DEX67QW3T2TR');
 
     try {
         $response = $sendgrid->send($emailSend);
-        if ($response->statusCode() >= 200 && $response->statusCode() < 300) {
-            echo "Mensaje enviado correctamente.";
-        } else {
-            echo "Error al enviar: Código " . $response->statusCode();
-        }
+        echo "Respuesta: " . $response->statusCode();
     } catch (Exception $e) {
-        echo 'Excepción: ' . $e->getMessage();
+        echo 'Error: ' . $e->getMessage();
     }
 }
-?>
+
