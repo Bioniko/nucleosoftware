@@ -21,12 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         // Configuración SMTP
         $mail->isSMTP();
-        $mail->Host       = 'smtp.myprofessionalmail.com';
+        $mail->Host       = 'smtp.office365.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'info@nucleosoftware.com';
         $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';
-        $mail->SMTPSecure = 'ssl'; // o 'tls' si usás puerto 587
-        $mail->Port       = 465;
+        $mail->SMTPSecure = 'tls'; // o 'tls' si usás puerto 587
+        $mail->Port       = 587;
 
         // Detalles del correo
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
