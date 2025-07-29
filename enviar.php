@@ -1,14 +1,13 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 require __DIR__ . '/vendor/autoload.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $nombre  = strip_tags($_POST['nombre'] ?? '');
+use SendGrid\Mail\Mail;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre  = htmlspecialchars($_POST['nombre'] ?? '');
     $correo   = filter_var($_POST['correo'] ?? '', FILTER_SANITIZE_EMAIL);
-    $mensaje = strip_tags($_POST['mensaje'] ?? '');
-    $celular = strip_tags($_POST['celular'] ?? '');
+    $celular  = htmlspecialchars($_POST['celular'] ?? '');
+    $mensaje = htmlspecialchars($_POST['mensaje'] ?? '');
 
     if (empty($nombre) || !filter_var($correo, FILTER_VALIDATE_EMAIL) || empty($mensaje)) {
         http_response_code(400);
@@ -16,39 +15,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $mail = new PHPMailer(true);
+    $emailSend = new Mail();
+    $emailSend->setFrom("info@nucleosoftware.com", "Nucleo Software");
+    $emailSend->setSubject("Nuevo mensaje desde la web");
+    $emailSend->addTo("info@nucleosoftware.com");
+    $emailSend->addReplyTo($correo, $nombre);
+    $emailSend->addContent("text/html", "
+        <strong>Nombre:</strong> {$nombre}<br>
+        <strong>Email:</strong> {$correo}<br>
+        <strong>Nombre:</strong> {$celular}<br>
+        <strong>Mensaje:</strong><br>" . nl2br($mensaje)
+    );
+
+    $sendgrid = new \SendGrid('4SRZWKNUN6R4DEX67QW3T2TR'); // <- pega aquí tu API key
 
     try {
-        // Configuración SMTP
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.secureserver.net';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'info@nucleosoftware.com';
-        $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Opcional: usa SSL o TLS si es necesario
-        $mail->Port       = 587; // Puerto SMTP de GoDaddy
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = 'html';
-
-
-        // Detalles del correo
-        $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
-        $mail->addAddress('info@nucleosoftware.com'); // destinatario
-        $mail->addReplyTo($correo, $nombre); // por si quieren responder
-
-        $mail->isHTML(true);
-        $mail->Subject = 'Nuevo mensaje desde el formulario de contacto';
-        $mail->Body    = "
-            <strong>Nombre:</strong> {$nombre}<br>
-            <strong>Correo:</strong> {$correo}<br>
-            <strong>Celular:</strong> {$celular}<br>
-            <strong>Mensaje:</strong><br>
-            " . nl2br($mensaje);
-
-        $mail->send();
-        echo "Mensaje enviado correctamente.";
+        $response = $sendgrid->send($emailSend);
+        if ($response->statusCode() >= 200 && $response->statusCode() < 300) {
+            echo "Mensaje enviado correctamente.";
+        } else {
+            echo "Error al enviar: Código " . $response->statusCode();
+        }
     } catch (Exception $e) {
-        echo "Error al enviar: {$mail->ErrorInfo}";
+        echo 'Excepción: ' . $e->getMessage();
     }
 }
 ?>
