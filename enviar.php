@@ -4,33 +4,40 @@ use PHPMailer\PHPMailer\Exception;
 
 require __DIR__ . '/vendor/autoload.php';
 
+header('Content-Type: text/plain; charset=utf-8');
+
 $mail = new PHPMailer(true);
 
 try {
-    // Configuración del servidor SMTP GoDaddy
+    // Configuración SMTP GoDaddy
     $mail->isSMTP();
-    $mail->Host       = 'smtp.secureserver.net';  // SMTP de GoDaddy
+    $mail->Host       = 'smtp.secureserver.net';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'info@nucleosoftware.com';  // Tu correo
-    $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';           // Tu contraseña
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // o PHPMailer::ENCRYPTION_SMTPS para SSL
-    $mail->Port       = 587;                        // Puerto SMTP
+    $mail->Username   = 'info@nucleosoftware.com'; // Cambia por tu correo
+    $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';          // Cambia por tu contraseña
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; 
+    $mail->Port       = 587;
 
-    // Remitente y destinatario
+    // Configurar remitente y destinatario
     $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
-    $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software'); // Destino
+    $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software');
 
-    // Contenido del mensaje
+    // Contenido
+    $nombre  = $_POST['nombre'] ?? 'Invitado';
+    $correo  = $_POST['correo'] ?? 'no-reply@nucleosoftware.com';
+    $mensaje = $_POST['mensaje'] ?? 'Mensaje vacío';
+
     $mail->isHTML(true);
     $mail->Subject = 'Nuevo mensaje desde el formulario web';
-    $mail->Body    = '
-        <strong>Nombre:</strong> ' . htmlspecialchars($_POST['nombre']) . '<br>
-        <strong>Email:</strong> ' . htmlspecialchars($_POST['correo']) . '<br>
-        <strong>Mensaje:</strong><br>' . nl2br(htmlspecialchars($_POST['mensaje'])) . '
-    ';
+    $mail->Body    = "<strong>Nombre:</strong> " . htmlspecialchars($nombre) .
+                     "<br><strong>Email:</strong> " . htmlspecialchars($correo) .
+                     "<br><strong>Mensaje:</strong><br>" . nl2br(htmlspecialchars($mensaje));
+
+    // Tiempo máximo para conectar SMTP
+    $mail->Timeout = 15; 
 
     $mail->send();
-    echo 'Mensaje enviado correctamente';
+    echo "Mensaje enviado correctamente.";
 } catch (Exception $e) {
     echo "Error al enviar: {$mail->ErrorInfo}";
 }
