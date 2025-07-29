@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $mensaje = strip_tags($_POST['mensaje'] ?? '');
     $celular = strip_tags($_POST['celular'] ?? '');
 
-    if (empty($nombre) || !filter_var($email, FILTER_VALIDATE_EMAIL) || empty($mensaje)) {
+    if (empty($nombre) || !filter_var($correo, FILTER_VALIDATE_EMAIL) || empty($mensaje)) {
         http_response_code(400);
         echo "Formulario inválido.";
         exit;
