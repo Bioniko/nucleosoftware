@@ -27,6 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Opcional: usa SSL o TLS si es necesario
         $mail->Port       = 587; // Puerto SMTP de GoDaddy
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = 'html';
+
 
         // Detalles del correo
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
