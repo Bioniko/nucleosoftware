@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "<strong>Nombre:</strong> $nombre<br><strong>Email:</strong> $email<br><strong>Mensaje:</strong><br>$mensaje"
     );
 
-    $sendgrid = new \SendGrid('4SRZWKNUN6R4DEX67QW3T2TR');
+    $sendgrid = new \SendGrid('SG.4xWjvXaNQm6vNFnzaqKLZQ.qQ0_OwqEXAMPLEVsgSVCZqTVmIkjMk');
 
     try {
         $response = $sendgrid->send($emailSend);
