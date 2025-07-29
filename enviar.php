@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre  = strip_tags($_POST['nombre'] ?? '');
-    $email   = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
+    $correo   = filter_var($_POST['correo'] ?? '', FILTER_SANITIZE_EMAIL);
     $mensaje = strip_tags($_POST['mensaje'] ?? '');
     $celular = strip_tags($_POST['celular'] ?? '');
 
@@ -31,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Detalles del correo
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
         $mail->addAddress('info@nucleosoftware.com'); // destinatario
-        $mail->addReplyTo($email, $nombre); // por si quieren responder
+        $mail->addReplyTo($correo, $nombre); // por si quieren responder
 
         $mail->isHTML(true);
         $mail->Subject = 'Nuevo mensaje desde el formulario de contacto';
         $mail->Body    = "
             <strong>Nombre:</strong> {$nombre}<br>
-            <strong>Email:</strong> {$email}<br>
+            <strong>Correo:</strong> {$correo}<br>
             <strong>Celular:</strong> {$celular}<br>
             <strong>Mensaje:</strong><br>
             " . nl2br($mensaje);
