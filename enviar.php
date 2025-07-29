@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailSend->setFrom("info@nucleosoftware.com", "Nucleo Software");
     $emailSend->setSubject("Nuevo mensaje desde el formulario web");
     $emailSend->addTo("info@nucleosoftware.com", "Nucleo Software");
-    $emailSend->addReplyTo($email, $nombre);
+    $emailSend->setReplyTo($email, $nombre);
     $emailSend->addContent(
         "text/html",
         "<strong>Nombre:</strong> $nombre<br><strong>Email:</strong> $email<br><strong>Mensaje:</strong><br>$mensaje"
