@@ -1,55 +1,51 @@
 <?php
-$host = 'smtp.secureserver.net';
-$port = 587;
-$timeout = 10;
+// Mostrar errores para depuración
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
-
-if ($connection) {
-    echo "Conexión exitosa a $host en puerto $port";
-    fclose($connection);
-} else {
-    echo "No se pudo conectar a $host en puerto $port. Error $errno: $errstr";
-}
-/*use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
+// Incluir autoload de Composer
 require __DIR__ . '/vendor/autoload.php';
 
-header('Content-Type: text/plain; charset=utf-8');
+use SendGrid\Mail\Mail;
 
-$mail = new PHPMailer(true);
-
-try {
-    // Configuración SMTP GoDaddy
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.secureserver.net';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'info@nucleosoftware.com'; // Cambia por tu correo
-    $mail->Password   = '7534f1596076e9e9e6cf7a94506bf14c';          // Cambia por tu contraseña
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; 
-    $mail->Port       = 587;
-
-    // Configurar remitente y destinatario
-    $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
-    $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software');
-
-    // Contenido
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Recoger datos del formulario
     $nombre  = $_POST['nombre'] ?? 'Invitado';
-    $correo  = $_POST['correo'] ?? 'no-reply@nucleosoftware.com';
+    $correo  = $_POST['correo'] ?? 'sin@correo.com';
     $mensaje = $_POST['mensaje'] ?? 'Mensaje vacío';
+    $celular = $_POST['celular'] ?? 'No proporcionado';
 
-    $mail->isHTML(true);
-    $mail->Subject = 'Nuevo mensaje desde el formulario web';
-    $mail->Body    = "<strong>Nombre:</strong> " . htmlspecialchars($nombre) .
-                     "<br><strong>Email:</strong> " . htmlspecialchars($correo) .
-                     "<br><strong>Mensaje:</strong><br>" . nl2br(htmlspecialchars($mensaje));
+    // Crear el correo
+    $email = new Mail();
+    $email->setFrom("info@nucleosoftware.com", "Nucleo Software");
+    $email->setSubject("Nuevo mensaje desde el formulario web");
+    $email->addTo("info@nucleosoftware.com", "Nucleo Software");
 
-    // Tiempo máximo para conectar SMTP
-    $mail->Timeout = 15; 
+    // Opcional: permitir responder al usuario que llenó el formulario
+    $email->setReplyTo($correo, $nombre);
 
-    $mail->send();
-    echo "Mensaje enviado correctamente.";
-} catch (Exception $e) {
-    echo "Error al enviar: {$mail->ErrorInfo}";
+    // Contenido HTML del correo
+    $contenido = "
+        <strong>Nombre:</strong> $nombre<br>
+        <strong>Correo:</strong> $correo<br>
+        <strong>Celular:</strong> $celular<br>
+        <strong>Mensaje:</strong><br>$mensaje
+    ";
+    $email->addContent("text/html", $contenido);
+
+    // Instancia SendGrid
+    $sendgrid = new \SendGrid('AQUI_VA_TU_API_KEY');
+
+    // Enviar
+    try {
+        $response = $sendgrid->send($email);
+        if ($response->statusCode() >= 200 && $response->statusCode() < 300) {
+            echo "Mensaje enviado correctamente.";
+        } else {
+            echo "Error al enviar. Código: " . $response->statusCode();
+        }
+    } catch (Exception $e) {
+        echo 'Excepción capturada: ' . $e->getMessage();
+    }
 }
