@@ -1,5 +1,4 @@
 <?php
-// Mostrar errores por si algo falla
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -7,75 +6,103 @@ error_reporting(E_ALL);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Asegúrate que estás usando Composer y que PHPMailer esté instalado
+require 'vendor/autoload.php'; // Composer debe estar instalado
+
+$estado = ''; // éxito o error
+$mensaje = ''; // contenido que se mostrará
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre   = $_POST['nombre'] ?? 'Invitado';
     $correo   = $_POST['correo'] ?? 'no-reply@tudominio.com';
-    $mensaje  = $_POST['mensaje'] ?? '';
+    $mensajeTexto  = $_POST['mensaje'] ?? '';
     $celular  = $_POST['celular'] ?? '';
 
     $mail = new PHPMailer(true);
 
     try {
-        // Configuración SMTP de Brevo (Sendinblue)
         $mail->isSMTP();
         $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '93a50b001@smtp-brevo.com'; // Tu correo SMTP de Brevo
-        $mail->Password   = 'EBCkFzHsp304ThKf';          // Tu contraseña SMTP
+        $mail->Username   = '93a50b001@smtp-brevo.com'; // Tu SMTP user de Brevo
+        $mail->Password   = 'EBCkFzHsp304ThKf';          // Tu clave SMTP
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        // Remitente y destinatario
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
         $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software');
         $mail->addReplyTo($correo, $nombre);
 
-        // Contenido del mensaje
         $mail->isHTML(true);
         $mail->Subject = 'Nuevo mensaje desde el sitio web';
         $mail->Body = "
             <strong>Nombre:</strong> $nombre<br>
             <strong>Correo:</strong> $correo<br>
             <strong>Celular:</strong> $celular<br>
-            <strong>Mensaje:</strong><br>$mensaje
+            <strong>Mensaje:</strong><br>$mensajeTexto
         ";
 
         $mail->send();
-
-        // Mostrar alerta de éxito
-        echo <<<HTML
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-        Swal.fire({
-            icon: 'success',
-            title: '¡Mensaje enviado!',
-            text: 'Tu mensaje ha sido enviado correctamente.',
-            confirmButtonText: 'Aceptar'
-        }).then(() => {
-            window.location.href = 'index.html';
-        });
-        </script>
-        HTML;
-
+        $estado = 'exito';
+        $mensaje = 'Tu mensaje ha sido enviado correctamente.';
     } catch (Exception $e) {
-        // Mostrar alerta de error
-        $errorMsg = addslashes($mail->ErrorInfo); // Escapa comillas para evitar errores JS
-        echo <<<HTML
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Error al enviar',
-            text: 'Error: {$errorMsg}',
-            confirmButtonText: 'Volver'
-        }).then(() => {
-            window.history.back();
-        });
-        </script>
-        HTML;
+        $estado = 'error';
+        $mensaje = 'Error al enviar el mensaje: ' . $mail->ErrorInfo;
     }
 }
 ?>
+
+<!-- HTML de alerta personalizada -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensaje</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .alert-box {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .alert-box h2 {
+            color: <?= $estado === 'exito' ? '#28a745' : '#dc3545' ?>;
+            margin-bottom: 15px;
+        }
+        .alert-box p {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+        .alert-box button {
+            padding: 10px 20px;
+            background-color: <?= $estado === 'exito' ? '#28a745' : '#dc3545' ?>;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .alert-box button:hover {
+            background-color: <?= $estado === 'exito' ? '#218838' : '#c82333' ?>;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-box">
+        <h2><?= $estado === 'exito' ? '¡Éxito!' : '¡Error!' ?></h2>
+        <p><?= htmlspecialchars($mensaje) ?></p>
+        <button onclick="window.location.href='/'">Volver al inicio</button>
+    </div>
+</body>
+</html>
