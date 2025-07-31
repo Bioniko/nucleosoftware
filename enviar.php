@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Mensaje</title>
     <style>
         body {
-            background-color: #f5f5f5;
+            background-color: #1e3968;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Redirige automáticamente después de 5 segundos
         setTimeout(() => {
             window.location.href = '/';
-        }, 5000);
+        }, 10000);
     </script>
 </body>
 </html>
