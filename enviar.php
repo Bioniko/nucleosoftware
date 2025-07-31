@@ -38,7 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ";
 
         $mail->send();
-        echo "<script>alert('Mensaje enviado correctamente'); window.location.href = '/';</script>";
+        echo '
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Mensaje enviado!",
+                    text: "Gracias por contactarnos. Te responderemos pronto.",
+                    confirmButtonText: "Aceptar"
+                }).then(() => {
+                    window.location.href = "/";
+                });
+            </script>
+        ';
     } catch (Exception $e) {
         echo "<script>alert('Error al enviar: {$mail->ErrorInfo}'); window.history.back();</script>";
     }
