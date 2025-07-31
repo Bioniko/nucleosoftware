@@ -1,9 +1,12 @@
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Incluye las clases si usas Composer
+require 'vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre   = $_POST['nombre'] ?? 'Invitado';
@@ -14,20 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mail = new PHPMailer(true);
 
     try {
-        // Configuración del servidor SMTP de Brevo (Sendinblue)
         $mail->isSMTP();
         $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '93a50b001@smtp-brevo.com'; // Correo con el que te registraste en Brevo
-        $mail->Password   = 'EBCkFzHsp304ThKf';        // Contraseña SMTP que generaste
+        $mail->Username   = '93a50b001@smtp-brevo.com';
+        $mail->Password   = 'EBCkFzHsp304ThKf';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
 
-        // Información del mensaje
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
-        $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software'); // Destinatario
-        $mail->addReplyTo($correo, $nombre); // Para poder responder al cliente
+        $mail->addAddress('info@nucleosoftware.com', 'Nucleo Software');
+        $mail->addReplyTo($correo, $nombre);
 
         $mail->isHTML(true);
         $mail->Subject = 'Nuevo mensaje desde el sitio web';
@@ -39,22 +40,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ";
 
         $mail->send();
-        // Después de $mail->send()
-        echo "
-        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+
+        echo <<<HTML
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
         Swal.fire({
             icon: 'success',
-            title: '¡Enviado!',
-            text: 'Tu mensaje ha sido enviado correctamente',
+            title: '¡Mensaje enviado!',
+            text: 'Tu mensaje ha sido enviado correctamente.',
             confirmButtonText: 'Aceptar'
         }).then(() => {
             window.location.href = '/';
         });
         </script>
-        ";
+        HTML;
+
     } catch (Exception $e) {
-        echo "<script>alert('Error al enviar: {$mail->ErrorInfo}'); window.history.back();</script>";
+        echo <<<HTML
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al enviar',
+            text: 'Error: {$mail->ErrorInfo}',
+            confirmButtonText: 'Volver'
+        }).then(() => {
+            window.history.back();
+        });
+        </script>
+        HTML;
     }
 }
 ?>
