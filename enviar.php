@@ -6,10 +6,10 @@ error_reporting(E_ALL);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'vendor/autoload.php'; // Composer debe estar instalado
+require 'vendor/autoload.php';
 
-$estado = ''; // éxito o error
-$mensaje = ''; // contenido que se mostrará
+$estado = '';
+$mensaje = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre   = $_POST['nombre'] ?? 'Invitado';
@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->isSMTP();
         $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = '93a50b001@smtp-brevo.com'; // Tu SMTP user de Brevo
-        $mail->Password   = 'EBCkFzHsp304ThKf';          // Tu clave SMTP
+        $mail->Username   = '93a50b001@smtp-brevo.com';
+        $mail->Password   = 'EBCkFzHsp304ThKf';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $mail->send();
         $estado = 'exito';
-        $mensaje = 'Tu mensaje ha sido enviado correctamente.';
+        $mensaje = 'Tu mensaje ha sido enviado correctamente. Estaremos en contacto contigo.';
     } catch (Exception $e) {
         $estado = 'error';
         $mensaje = 'Error al enviar el mensaje: ' . $mail->ErrorInfo;
@@ -52,49 +52,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<!-- HTML de alerta personalizada -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Mensaje</title>
     <style>
         body {
-            background-color: #1e3968;
+            background-color: #f5f5f5;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
         .alert-box {
             background-color: #fff;
-            padding: 30px;
+            padding: 30px 25px;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            max-width: 420px;
+            width: 100%;
         }
         .alert-box h2 {
-            color: <?= $estado === 'exito' ? '#1e3968' : '#dc3545' ?>;
+            color: #1e3968;
             margin-bottom: 15px;
+            font-size: 1.8rem;
         }
         .alert-box p {
-            font-size: 16px;
+            font-size: 1.1rem;
             margin-bottom: 25px;
+            color: #333;
+            line-height: 1.4;
         }
         .alert-box button {
-            padding: 10px 20px;
-            background-color: <?= $estado === 'exito' ? '#1e3968' : '#dc3545' ?>;
+            padding: 12px 28px;
+            background-color: #1e3968;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
         }
         .alert-box button:hover {
-            background-color: <?= $estado === 'exito' ? '#1e3968' : '#c82333' ?>;
+            background-color: #163060;
+        }
+        /* Responsividad */
+        @media (max-width: 480px) {
+            .alert-box {
+                padding: 25px 15px;
+                max-width: 320px;
+            }
+            .alert-box h2 {
+                font-size: 1.5rem;
+            }
+            .alert-box p {
+                font-size: 1rem;
+            }
+            .alert-box button {
+                width: 100%;
+                padding: 14px 0;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -104,5 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p><?= htmlspecialchars($mensaje) ?></p>
         <button onclick="window.location.href='/'">Volver al inicio</button>
     </div>
+
+    <script>
+        // Redirige automáticamente después de 5 segundos
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 5000);
+    </script>
 </body>
 </html>
