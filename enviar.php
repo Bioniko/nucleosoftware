@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Mensaje</title>
     <style>
         body {
-            background-color: #f5f5f5;
+            background-color: #1e3968;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 90%;
         }
         .alert-box h2 {
-            color: <?= $estado === 'exito' ? '#28a745' : '#dc3545' ?>;
+            color: <?= $estado === 'exito' ? '#1e3968' : '#dc3545' ?>;
             margin-bottom: 15px;
         }
         .alert-box p {
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .alert-box button {
             padding: 10px 20px;
-            background-color: <?= $estado === 'exito' ? '#28a745' : '#dc3545' ?>;
+            background-color: <?= $estado === 'exito' ? '#1e3968' : '#dc3545' ?>;
             color: white;
             border: none;
             border-radius: 8px;
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 16px;
         }
         .alert-box button:hover {
-            background-color: <?= $estado === 'exito' ? '#218838' : '#c82333' ?>;
+            background-color: <?= $estado === 'exito' ? '#1e3968' : '#c82333' ?>;
         }
     </style>
 </head>
