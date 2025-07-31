@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->isSMTP();
         $mail->Host       = 'smtp-relay.brevo.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'info@nucleosoftware.com'; // Correo con el que te registraste en Brevo
+        $mail->Username   = '93a416001@smtp-brevo.com'; // Correo con el que te registraste en Brevo
         $mail->Password   = 'AUbg6VdX25kOyzHt';        // Contraseña SMTP que generaste
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
