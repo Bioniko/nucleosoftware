@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo/logo2.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="assets/images/logo/icon.png" />
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/LineIcons.2.0.css" />
@@ -594,31 +594,36 @@
             <div class="row justify-content-center">
             <div class="col-lg-8">
                 <form id="contact-form" action="enviar.php" method="POST">
-                <div class="row">
-                    <div class="col-md-6">
-                    <div class="form-group" style="padding: 3% 0% 0% 0%;">
-                        <input type="text" name="nombre" class="form-control" placeholder="Tu nombre completo" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" style="padding: 3% 0% 0% 0%;">
+                                <input type="text" name="nombre" class="form-control" placeholder="Tu nombre completo" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="padding: 3% 0% 0% 0%;">
+                                <input type="email" name="correo" class="form-control" placeholder="Tu correo electrónico" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="padding: 3% 0% 0% 0%;">
+                                <input type="tel" name="celular" class="form-control" placeholder="Celular" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group" style="padding: 3% 0% 0% 0%;">
+                                <textarea name="mensaje" class="form-control" rows="5" placeholder="Tu mensaje" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group" style="padding: 3% 0% 0% 0%; text-align: center;">
+                                <div class="g-recaptcha" data-sitekey="6LcVHr4rAAAAALRDzj65UFxhr4y2twfVO66YvQON"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-center" style="padding: 3% 0% 0% 0%;">
+                            <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                        </div>
                     </div>
-                    </div>
-                    <div class="col-md-6">
-                    <div class="form-group" style="padding: 3% 0% 0% 0%;">
-                        <input type="email" name="correo" class="form-control" placeholder="Tu correo electrónico" required>
-                    </div>
-                    </div>
-                    <div class="col-md-6">
-                    <div class="form-group" style="padding: 3% 0% 0% 0%;">
-                        <input type="tel" name="celular" class="form-control" placeholder="Celular" required>
-                    </div>
-                    </div>
-                    <div class="col-md-12">
-                    <div class="form-group" style="padding: 3% 0% 0% 0%;">
-                        <textarea name="mensaje" class="form-control" rows="5" placeholder="Tu mensaje" required></textarea>
-                    </div>
-                    </div>
-                    <div class="col-md-12 text-center" style="padding: 3% 0% 0% 0%;">
-                        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
-                    </div>
-                </div>
                 </form>
                 <!-- Puedes mostrar info directa también -->
                 <div class="text-center mt-4">
@@ -714,5 +719,6 @@
     });
   });
 </script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>

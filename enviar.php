@@ -12,6 +12,21 @@ $estado = '';
 $mensaje = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // --- Validación reCAPTCHA ---
+    $secretKey = "6LcVHr4rAAAAAHc_1AebrHJlTHwgANSprXeoMf96"; // clave secreta
+    $responseKey = $_POST['g-recaptcha-response'] ?? '';
+    $userIP = $_SERVER['REMOTE_ADDR'];
+
+    $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$responseKey&remoteip=$userIP";
+    $response = file_get_contents($url);
+    $responseKeys = json_decode($response, true);
+
+    if (!isset($responseKeys["success"]) || $responseKeys["success"] !== true) {
+        echo "<script>alert('⚠️ Por favor, confirma que no eres un robot.');window.history.back();</script>";
+        exit;
+    }
+
+
     $nombre   = $_POST['nombre'] ?? 'Invitado';
     $correo   = $_POST['correo'] ?? 'no-reply@tudominio.com';
     $mensajeTexto  = $_POST['mensaje'] ?? '';
