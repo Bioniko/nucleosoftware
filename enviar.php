@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
         $mail->CharSet    = 'UTF-8';
-        $mail->SMTPDebug = 3; // Cambia a 3 para más detalle
-        $mail->Debugoutput = 'html';
+        //$mail->SMTPDebug = 3; // Cambia a 3 para más detalle
+        //$mail->Debugoutput = 'html';
 
 
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
@@ -69,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<!--
 <!DOCTYPE html>
 <html lang="es">
 <head>
