@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         $mail->setFrom('info@nucleosoftware.com', 'Nucleo Software');
-        $mail->addAddress('dashpelis@gmail.com', 'Prueba');
+        $mail->addAddress('dashpelis@gmail.com', 'Nucleo Software');
         $mail->addReplyTo($correo, $nombre);
 
         $mail->isHTML(true);
